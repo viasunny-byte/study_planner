@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'add_target_screen.dart';
 import 'notification.dart';
-import 'custom_bottom_nav.dart';
+import '../widgets/custom_bottom_nav.dart';
 
 class StudyPlannerDashboard extends StatefulWidget {
   const StudyPlannerDashboard({super.key});

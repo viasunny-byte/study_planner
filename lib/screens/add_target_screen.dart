@@ -9,44 +9,50 @@ class AddTargetScreen extends StatefulWidget {
 
 class _AddTargetScreenState extends State<AddTargetScreen> {
   final _titleController = TextEditingController();
-  double _currentProgress = 0.0;
+  double _progress = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Tambah Target Baru"), backgroundColor: Colors.white, foregroundColor: Colors.black, elevation: 0),
+      appBar: AppBar(
+        title: const Text("Tambah Target"),
+        backgroundColor: Colors.deepPurple,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: "Nama Mata Kuliah", border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 30),
-            Text("Progres: ${(_currentProgress * 100).toInt()}%", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Slider(
-              value: _currentProgress,
-              activeColor: Colors.deepPurple,
-              onChanged: (val) => setState(() => _currentProgress = val),
-            ),
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
-                onPressed: () {
-                  Navigator.pop(context, {
-                    "title": _titleController.text,
-                    "percent": "${(_currentProgress * 100).toInt()}%",
-                    "value": _currentProgress,
-                    "subTasks": ["Tugas Baru"],
-                    "isDone": _currentProgress == 1.0,
-                  });
-                },
-                child: const Text("SIMPAN", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              decoration: const InputDecoration(
+                labelText: "Nama Mata Kuliah",
+                border: OutlineInputBorder(),
               ),
+            ),
+            const SizedBox(height: 20),
+
+            Text("Progress: ${(_progress * 100).toInt()}%"),
+            Slider(
+              value: _progress,
+              onChanged: (val) => setState(() => _progress = val),
+            ),
+
+            const Spacer(),
+
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+              ),
+              onPressed: () {
+                Navigator.pop(context, {
+                  "title": _titleController.text,
+                  "percent": "${(_progress * 100).toInt()}%",
+                  "value": _progress,
+                  "isDone": _progress == 1,
+                  "subTasks": [],
+                });
+              },
+              child: const Text("SIMPAN"),
             )
           ],
         ),
