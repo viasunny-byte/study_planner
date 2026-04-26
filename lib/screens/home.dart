@@ -1,219 +1,77 @@
 import 'package:flutter/material.dart';
+import 'add_target_screen.dart'; 
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class StudyPlannerDashboard extends StatefulWidget {
+  const StudyPlannerDashboard({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Home")),
-      body: const Center(child: Text("HOME")),
+  State<StudyPlannerDashboard> createState() => _StudyPlannerDashboardState();
+}
+
+class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
+  int _currentIndex = 0;
+  DateTime _focusedDate = DateTime.now();
+  DateTime _selectedDate = DateTime.now();
+
+  List<Map<String, dynamic>> _myTasks = [
+    {
+      "title": "Aplikasi Perangkat Bergerak",
+      "percent": "90%",
+      "value": 0.9,
+      "subTasks": ["Progres Tubes - 18 April 2026", "Tugas Individu 5"],
+      "isDone": false,
+    },
+    {
+      "title": "Sistem Cerdas",
+      "percent": "40%",
+      "value": 0.4,
+      "subTasks": ["Tugas Kelompok 1"],
+      "isDone": false,
+    },
+    {
+      "title": "Penetrasi dan Pengujian Etika Peretasan",
+      "percent": "100%",
+      "value": 1.0,
+      "subTasks": [],
+      "isDone": true,
+    },
+  ];
+
+  final List<String> _daysOfWeek = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+  int _getDaysInMonth(int year, int month) => DateTime(year, month + 1, 0).day;
+  int _getFirstDayOffset(int year, int month) => DateTime(year, month, 1).weekday - 1;
+
+  void _goToAddTask() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddTargetScreen()),
     );
-  }
-}
-void main() {
-  runApp(const MyApp());
-}
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+    if (result != null) {
+      setState(() => _myTasks.add(result));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: StudyPlannerDashboard(),
-    );
-  }
-}
+    final List<Widget> pages = [
+      _buildHomeContent(),
+      const Center(child: Text("Halaman Statistik")),
+      const Center(child: Text("Halaman Profil")),
+    ];
 
-class StudyPlannerDashboard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header section
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          "Halo, SUNNY 😊",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text("Selamat Belajar Bestie."),
-                      ],
-                    ),
-                    Stack(
-                      children: [
-                        const Icon(Icons.notifications_none_outlined, size: 30),
-                        Positioned(
-                          right: 0,
-                          top: 0,
-                          child: Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: Colors.deepPurple,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            constraints: const BoxConstraints(
-                              minWidth: 14,
-                              minHeight: 14,
-                            ),
-                            child: const Text(
-                              '1',
-                              style: TextStyle(color: Colors.white, fontSize: 8),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-                const SizedBox(height: 25),
-
-                // Calendar Card
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Icon(Icons.chevron_left),
-                          Text(
-                            "Senin, 6 April 2026",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Icon(Icons.chevron_right),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      // Image mockup of calendar headers
-                      const Text("Sen  Sel   Rab  Kam   Jum   Sab   Min",
-                          style: TextStyle(fontSize: 12, color: Colors.grey)),
-                      const SizedBox(height: 5),
-                      // Simple Grid for Calendar logic replacement
-                      GridView.count(
-                        shrinkWrap: true,
-                        crossAxisCount: 7,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: List.generate(30, (index) {
-                          int day = index + 1;
-                          bool isSelected = day == 6;
-                          return Center(
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: isSelected ? Colors.deepPurple : Colors.transparent,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Text(
-                                "$day",
-                                style: TextStyle(
-                                  color: isSelected ? Colors.white : Colors.black,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      )
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 25),
-
-                const Text(
-                  "Target Hari Ini",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 15),
-
-                // Horizontal Scrollable Cards
-                SizedBox(
-                  height: 180,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      _buildProgressCard(
-                        "Aplikasi Perangkat Bergerak",
-                        "90%",
-                        0.9,
-                        [
-                          "Progres Tubes - 18 April 2026",
-                          "Tugas Individu 5 - 6 April 2026",
-                          "Tugas Individu 4 - 1 April 2026"
-                        ],
-                      ),
-                      _buildProgressCard(
-                        "Sistem Cerdas",
-                        "40%",
-                        0.4,
-                        ["Tugas Kelompok 1", "Laporan Akhir"],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 25),
-
-                // Bottom Section Card
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Penetrasl dan Pengujian\nEtika Peretasan",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 10),
-                          Text("Mantappp\nUdah kelar tugas nya bestie"),
-                        ],
-                      ),
-                      const Icon(Icons.wb_sunny, size: 50, color: Colors.orange),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.deepPurple,
-        unselectedItemColor: Colors.black54,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.pie_chart_outline), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ""),
         ],
@@ -221,65 +79,165 @@ class StudyPlannerDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressCard(String title, String percentText, double percentValue, List<String> tasks) {
-    return Container(
-      width: 280,
-      margin: const EdgeInsets.only(right: 15),
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Row(
-        children: [
-          // Circular Progress
-          Stack(
-            alignment: Alignment.center,
+  Widget _buildHomeContent() {
+    int daysInMonth = _getDaysInMonth(_focusedDate.year, _focusedDate.month);
+    int offset = _getFirstDayOffset(_focusedDate.year, _focusedDate.month);
+    List<String> months = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                width: 70,
-                height: 70,
-                child: CircularProgressIndicator(
-                  value: percentValue,
-                  strokeWidth: 8,
-                  backgroundColor: Colors.grey[200],
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+              _buildHeader(),
+              const SizedBox(height: 25),
+
+              // --- FULL CALENDAR CARD ---
+              Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => setState(() => _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1))),
+                        Text("${months[_focusedDate.month]} ${_focusedDate.year}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                        IconButton(icon: const Icon(Icons.chevron_right), onPressed: () => setState(() => _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1))),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: _daysOfWeek.map((day) => Text(day, style: const TextStyle(fontSize: 12, color: Colors.grey))).toList(),
+                    ),
+                    const SizedBox(height: 10),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
+                      itemCount: daysInMonth + offset,
+                      itemBuilder: (context, index) {
+                        if (index < offset) return const SizedBox.shrink();
+                        int day = index - offset + 1;
+                        bool isSelected = day == _selectedDate.day && _focusedDate.month == _selectedDate.month && _focusedDate.year == _selectedDate.year;
+                        return GestureDetector(
+                          onTap: () => setState(() => _selectedDate = DateTime(_focusedDate.year, _focusedDate.month, day)),
+                          child: Center(
+                            child: Container(
+                              width: 35, height: 35,
+                              decoration: BoxDecoration(color: isSelected ? Colors.deepPurple : Colors.transparent, shape: BoxShape.circle),
+                              child: Center(child: Text("$day", style: TextStyle(color: isSelected ? Colors.white : Colors.black, fontSize: 12))),
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  ],
                 ),
               ),
-              Text(percentText, style: const TextStyle(fontWeight: FontWeight.bold)),
+
+              const SizedBox(height: 25),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Target Hari Ini", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  IconButton(
+                    onPressed: _goToAddTask,
+                    icon: const Icon(Icons.add_circle, color: Colors.deepPurple, size: 30),
+                  )
+                ],
+              ),
+              const SizedBox(height: 15),
+              _buildDynamicTaskList(),
             ],
           ),
-          const SizedBox(width: 15),
-          // Task List
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Column(crossAxisAlignment: CrossAxisAlignment.start, children: const [Text("Halo, SUNNY 😊", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)), Text("Selamat Belajar Bestie.")]), const Icon(Icons.notifications_none_outlined, size: 30)]);
+
+  Widget _buildDynamicTaskList() {
+    return SizedBox(
+      height: 180,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: _myTasks.length,
+        itemBuilder: (context, index) {
+          final task = _myTasks[index];
+          bool isDone = task["isDone"] ?? false;
+
+          return Stack(
+            children: [
+              Container(
+                width: 280,
+                margin: const EdgeInsets.only(right: 15),
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  border: isDone ? Border.all(color: Colors.orange.withOpacity(0.2)) : null,
                 ),
-                const SizedBox(height: 8),
-                ...tasks.map((task) => Row(
+                child: Row(
                   children: [
-                    const Icon(Icons.check_circle, size: 12, color: Colors.deepPurple),
-                    const SizedBox(width: 5),
-                    Expanded(
-                      child: Text(
-                        task,
-                        style: const TextStyle(fontSize: 10),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    isDone
+                        ? const Icon(Icons.wb_sunny, size: 55, color: Colors.orange)
+                        : Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                            width: 70, height: 70,
+                            child: CircularProgressIndicator(
+                                value: task["value"],
+                                strokeWidth: 8,
+                                color: Colors.deepPurple,
+                                backgroundColor: Colors.grey[200]
+                            )
+                        ),
+                        Text(task["percent"], style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ],
                     ),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(task["title"], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13), maxLines: 2),
+                          const SizedBox(height: 8),
+                          isDone
+                              ? const Text("Mantappp\nUdah kelar tugas nya bestie", style: TextStyle(fontSize: 11, color: Colors.grey))
+                              : Column(
+                            children: (task["subTasks"] as List).map((t) => Row(
+                                children: [
+                                  const Icon(Icons.check_circle, size: 12, color: Colors.deepPurple),
+                                  const SizedBox(width: 5),
+                                  Expanded(child: Text(t, style: const TextStyle(fontSize: 10), maxLines: 1))
+                                ]
+                            )).toList(),
+                          ),
+                        ],
+                      ),
+                    )
                   ],
-                )).toList(),
-              ],
-            ),
-          )
-        ],
+                ),
+              ),
+              
+              if (isDone)
+                Positioned(
+                  right: 10,
+                  top: 5,
+                  child: IconButton(
+                    icon: const Icon(Icons.cancel, color: Colors.red, size: 20),
+                    onPressed: () => setState(() => _myTasks.removeAt(index)),
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }
