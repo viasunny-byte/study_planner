@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'add_target_screen.dart'; 
+import 'add_target_screen.dart';
 
 class StudyPlannerDashboard extends StatefulWidget {
   const StudyPlannerDashboard({super.key});
@@ -13,27 +13,33 @@ class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
   DateTime _focusedDate = DateTime.now();
   DateTime _selectedDate = DateTime.now();
 
+  // --- DATA SOURCE DENGAN STRUKTUR BARU ---
   List<Map<String, dynamic>> _myTasks = [
     {
       "title": "Aplikasi Perangkat Bergerak",
       "percent": "90%",
       "value": 0.9,
-      "subTasks": ["Progres Tubes - 18 April 2026", "Tugas Individu 5"],
       "isDone": false,
+      "subTasks": [
+        {"name": "Progres Tubes", "date": "18 April 2026", "time": "23:59"},
+        {"name": "Tugas Individu 5", "date": "6 April 2026", "time": "23:59"},
+      ],
     },
     {
       "title": "Sistem Cerdas",
       "percent": "40%",
       "value": 0.4,
-      "subTasks": ["Tugas Kelompok 1"],
       "isDone": false,
+      "subTasks": [
+        {"name": "Tugas Kelompok 1", "date": "10 April 2026", "time": "12:00"},
+      ],
     },
     {
       "title": "Penetrasi dan Pengujian Etika Peretasan",
       "percent": "100%",
       "value": 1.0,
-      "subTasks": [],
       "isDone": true,
+      "subTasks": [],
     },
   ];
 
@@ -46,7 +52,6 @@ class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
       context,
       MaterialPageRoute(builder: (context) => const AddTargetScreen()),
     );
-
     if (result != null) {
       setState(() => _myTasks.add(result));
     }
@@ -93,63 +98,9 @@ class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
             children: [
               _buildHeader(),
               const SizedBox(height: 25),
-
-              // --- FULL CALENDAR CARD ---
-              Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => setState(() => _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1))),
-                        Text("${months[_focusedDate.month]} ${_focusedDate.year}", style: const TextStyle(fontWeight: FontWeight.bold)),
-                        IconButton(icon: const Icon(Icons.chevron_right), onPressed: () => setState(() => _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1))),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: _daysOfWeek.map((day) => Text(day, style: const TextStyle(fontSize: 12, color: Colors.grey))).toList(),
-                    ),
-                    const SizedBox(height: 10),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
-                      itemCount: daysInMonth + offset,
-                      itemBuilder: (context, index) {
-                        if (index < offset) return const SizedBox.shrink();
-                        int day = index - offset + 1;
-                        bool isSelected = day == _selectedDate.day && _focusedDate.month == _selectedDate.month && _focusedDate.year == _selectedDate.year;
-                        return GestureDetector(
-                          onTap: () => setState(() => _selectedDate = DateTime(_focusedDate.year, _focusedDate.month, day)),
-                          child: Center(
-                            child: Container(
-                              width: 35, height: 35,
-                              decoration: BoxDecoration(color: isSelected ? Colors.deepPurple : Colors.transparent, shape: BoxShape.circle),
-                              child: Center(child: Text("$day", style: TextStyle(color: isSelected ? Colors.white : Colors.black, fontSize: 12))),
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  ],
-                ),
-              ),
-
+              _buildCalendarCard(months, offset, daysInMonth),
               const SizedBox(height: 25),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text("Target Hari Ini", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  IconButton(
-                    onPressed: _goToAddTask,
-                    icon: const Icon(Icons.add_circle, color: Colors.deepPurple, size: 30),
-                  )
-                ],
-              ),
+              _buildSectionHeader(),
               const SizedBox(height: 15),
               _buildDynamicTaskList(),
             ],
@@ -160,6 +111,14 @@ class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
   }
 
   Widget _buildHeader() => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Column(crossAxisAlignment: CrossAxisAlignment.start, children: const [Text("Halo, SUNNY 😊", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)), Text("Selamat Belajar Bestie.")]), const Icon(Icons.notifications_none_outlined, size: 30)]);
+
+  Widget _buildSectionHeader() => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      const Text("Target Hari Ini", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      IconButton(onPressed: _goToAddTask, icon: const Icon(Icons.add_circle, color: Colors.deepPurple, size: 30)),
+    ],
+  );
 
   Widget _buildDynamicTaskList() {
     return SizedBox(
@@ -186,50 +145,16 @@ class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
                   children: [
                     isDone
                         ? const Icon(Icons.wb_sunny, size: 55, color: Colors.orange)
-                        : Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                            width: 70, height: 70,
-                            child: CircularProgressIndicator(
-                                value: task["value"],
-                                strokeWidth: 8,
-                                color: Colors.deepPurple,
-                                backgroundColor: Colors.grey[200]
-                            )
-                        ),
-                        Text(task["percent"], style: const TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
+                        : _buildProgressCircle(task),
                     const SizedBox(width: 15),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(task["title"], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13), maxLines: 2),
-                          const SizedBox(height: 8),
-                          isDone
-                              ? const Text("Mantappp\nUdah kelar tugas nya bestie", style: TextStyle(fontSize: 11, color: Colors.grey))
-                              : Column(
-                            children: (task["subTasks"] as List).map((t) => Row(
-                                children: [
-                                  const Icon(Icons.check_circle, size: 12, color: Colors.deepPurple),
-                                  const SizedBox(width: 5),
-                                  Expanded(child: Text(t, style: const TextStyle(fontSize: 10), maxLines: 1))
-                                ]
-                            )).toList(),
-                          ),
-                        ],
-                      ),
-                    )
+                    _buildTaskDetails(task, isDone),
                   ],
                 ),
               ),
-              
+              // TOMBOL HAPUS HANYA UNTUK YANG SELESAI
               if (isDone)
                 Positioned(
-                  right: 10,
-                  top: 5,
+                  right: 10, top: 5,
                   child: IconButton(
                     icon: const Icon(Icons.cancel, color: Colors.red, size: 20),
                     onPressed: () => setState(() => _myTasks.removeAt(index)),
@@ -241,4 +166,80 @@ class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
       ),
     );
   }
+
+  Widget _buildProgressCircle(Map<String, dynamic> task) => Stack(
+    alignment: Alignment.center,
+    children: [
+      SizedBox(width: 70, height: 70, child: CircularProgressIndicator(value: task["value"], strokeWidth: 8, color: Colors.deepPurple, backgroundColor: Colors.grey[200])),
+      Text(task["percent"], style: const TextStyle(fontWeight: FontWeight.bold)),
+    ],
+  );
+
+  Widget _buildTaskDetails(Map<String, dynamic> task, bool isDone) => Expanded(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(task["title"], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+        const SizedBox(height: 8),
+        isDone
+            ? const Text("Mantappp\nUdah kelar tugas nya bestie", style: TextStyle(fontSize: 11, color: Colors.grey))
+            : Column(
+          children: (task["subTasks"] as List).map((sub) => Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.check_circle, size: 12, color: Colors.deepPurple),
+                const SizedBox(width: 5),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // JUDUL BOLD
+                      Text(sub["name"], style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                      // TANGGAL & JAM KECIL
+                      Text("${sub["date"]} - ${sub["time"]}", style: const TextStyle(fontSize: 8, color: Colors.grey)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )).toList(),
+        ),
+      ],
+    ),
+  );
+
+  Widget _buildCalendarCard(List<String> months, int offset, int daysInMonth) => Container(
+    padding: const EdgeInsets.all(15),
+    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
+    child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => setState(() => _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1))),
+            Text("${months[_focusedDate.month]} ${_focusedDate.year}", style: const TextStyle(fontWeight: FontWeight.bold)),
+            IconButton(icon: const Icon(Icons.chevron_right), onPressed: () => setState(() => _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1))),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: _daysOfWeek.map((day) => Text(day, style: const TextStyle(fontSize: 12, color: Colors.grey))).toList()),
+        GridView.builder(
+          shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
+          itemCount: daysInMonth + offset,
+          itemBuilder: (context, index) {
+            if (index < offset) return const SizedBox.shrink();
+            int day = index - offset + 1;
+            bool isSelected = day == _selectedDate.day && _focusedDate.month == _selectedDate.month && _focusedDate.year == _selectedDate.year;
+            return GestureDetector(
+              onTap: () => setState(() => _selectedDate = DateTime(_focusedDate.year, _focusedDate.month, day)),
+              child: Center(child: Container(width: 35, height: 35, decoration: BoxDecoration(color: isSelected ? Colors.deepPurple : Colors.transparent, shape: BoxShape.circle), child: Center(child: Text("$day", style: TextStyle(color: isSelected ? Colors.white : Colors.black, fontSize: 12))))),
+            );
+          },
+        )
+      ],
+    ),
+  );
 }
