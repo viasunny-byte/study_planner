@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'add_target_screen.dart';
+import 'notification.dart';
 
 class StudyPlannerDashboard extends StatefulWidget {
   const StudyPlannerDashboard({super.key});
@@ -109,8 +110,32 @@ class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
     );
   }
 
-  Widget _buildHeader() => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Column(crossAxisAlignment: CrossAxisAlignment.start, children: const [Text("Halo, SUNNY 😊", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)), Text("Selamat Belajar Bestie.")]), const Icon(Icons.notifications_none_outlined, size: 30)]);
-
+  Widget _buildHeader() => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const [
+          Text(
+            "Halo, SUNNY 😊",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          Text("Selamat Belajar Bestie."),
+        ],
+      ),
+      IconButton(
+        icon: const Icon(Icons.notifications_none_outlined, size: 30),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const NotificationPage(),
+            ),
+          );
+        },
+      ),
+    ],
+  );
   Widget _buildSectionHeader() => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
