@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'custom_bottom_nav.dart';
+import '../widgets/custom_bottom_nav.dart';
 import 'setting_screen.dart';
 
 class ScheduleScreen extends StatelessWidget {
