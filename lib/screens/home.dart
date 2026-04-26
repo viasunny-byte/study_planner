@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'add_target_screen.dart';
 import 'notification.dart';
+import 'custom_bottom_nav.dart';
 
 class StudyPlannerDashboard extends StatefulWidget {
   const StudyPlannerDashboard({super.key});
@@ -68,19 +69,7 @@ class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       body: pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.deepPurple,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.pie_chart_outline), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ""),
-        ],
-      ),
+      bottomNavigationBar: CustomBottomNav(currentIndex: _currentIndex),
     );
   }
 
