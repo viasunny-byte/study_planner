@@ -234,7 +234,17 @@ class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
 
   Widget _buildCalendarCard(List<String> months, int offset, int daysInMonth) => Container(
     padding: const EdgeInsets.all(15),
-    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(15),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.08),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
     child: Column(
       children: [
         Row(
