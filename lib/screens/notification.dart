@@ -25,6 +25,7 @@ class NotificationPage extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         title: const Text("Notifikasi"),
         backgroundColor: Colors.deepPurple,
