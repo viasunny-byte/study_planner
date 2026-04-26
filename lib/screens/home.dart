@@ -13,7 +13,6 @@ class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
   DateTime _focusedDate = DateTime.now();
   DateTime _selectedDate = DateTime.now();
 
-  // --- DATA SOURCE DENGAN STRUKTUR BARU ---
   List<Map<String, dynamic>> _myTasks = [
     {
       "title": "Aplikasi Perangkat Bergerak",
@@ -151,7 +150,7 @@ class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
                   ],
                 ),
               ),
-              // TOMBOL HAPUS HANYA UNTUK YANG SELESAI
+
               if (isDone)
                 Positioned(
                   right: 10, top: 5,
@@ -195,9 +194,7 @@ class _StudyPlannerDashboardState extends State<StudyPlannerDashboard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // JUDUL BOLD
                       Text(sub["name"], style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                      // TANGGAL & JAM KECIL
                       Text("${sub["date"]} - ${sub["time"]}", style: const TextStyle(fontSize: 8, color: Colors.grey)),
                     ],
                   ),
