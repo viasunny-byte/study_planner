@@ -14,7 +14,7 @@ class CustomBottomNav extends StatelessWidget {
     Widget page;
 
     if (index == 0) {
-      page = HomeScreen();
+      page = const HomeScreen();
     } else if (index == 1) {
       page = const ScheduleScreen();
     } else if (index == 2) {
